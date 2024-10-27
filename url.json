@@ -1,0 +1,39 @@
+{
+ "attr": [
+  "{model}/attr",
+  "GET"
+ ],
+ "store": [
+  "{model}/",
+  "POST"
+ ],
+ "show": [
+  "{model}/{id}",
+  "GET"
+ ],
+ "update": [
+  "{model}/{id}",
+  "PUT"
+ ],
+ "destroy": [
+  "{model}/{id}",
+  "DELETE"
+ ],
+ "base": "http://127.0.0.1:8000/api",
+ "table": [
+  "table",
+  "GET"
+ ],
+ "": [
+  "{model}/attr/specify",
+  "GET"
+ ],
+ "fillable": [
+  "{model}/attr/fillable",
+  "GET"
+ ],
+ "anyView": [
+  "{model}",
+  "GET"
+ ]
+}
