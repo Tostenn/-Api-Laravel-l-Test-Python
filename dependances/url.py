@@ -1,5 +1,5 @@
-from repertoire import recujson
-from requests import get
+from repertoire import recujson,__ecri_fic__
+from requests import get, post, put, delete
 
 class Url:
     r"""
@@ -20,10 +20,13 @@ class Url:
         'attr':'attr',
     }
     
-    def __init__(self, json:str) -> None:
+    def __init__(self, json:str, header:str) -> None:
+        # rucupere les url
         self.json = recujson(json)
         self.base = self.json['base']
-        pass
+
+        # recupere les en têtê
+        self.header = recujson(header)
 
     def parse_url(self,key:str, **kwargs):
         """formatage de l'url
@@ -49,30 +52,59 @@ class Url:
        
         :param url: url pour la requête
         """
-        try: return get(url)
+        try: return get(url, headers=self.header)
         except: return False # lever une exception personnaliser
 
-    def push(self, url:str, data:object, method:str):
+    def push(self, url:str, data:dict, method:str="post"):
         r""" envoir les données
        
         :param url: url pour la requête
         :param data: données à envoyer
-        :param method: methode d'envoie
         """
-        pass
+        try:
+            if method == 'post':
+                return post(url,data=data, headers=self.header)
+            elif method == 'put':
+                return put(url,data=data, headers=self.header)
+        except: return False # lever une exception personnaliser
     
+    def destroy(self, url):
+        r""" envoir les données
+       
+        :param url: url pour la requête
+        :param data: données à envoyer
+        """
+        try:
+            return delete(url, headers=self.header)
+        except: return False # lever une exception personnaliser
+
 
     def fetch(self, key="", **kwargs):
         kwargs['output_str'] = False
 
         if not kwargs.get('url'):
             method, url = self.parse_url(key, **kwargs)
+            
         else:
             url = kwargs.get('url')
             method = kwargs.get('method', 'get')
+        
+        method = method.lower()
 
-        if method.lower() == 'get':
+        if method == 'get':
             reponse = self.pull(url) 
-            return ('get', url, reponse.status_code), reponse.json()
+            return (method, url, reponse.status_code), reponse.json()
+        
+        elif method == 'post':
+            reponse = self.push(url,kwargs.get('data'))
+            return (method, url, reponse.status_code), reponse.json()
+        
+        elif method == 'put':
+            reponse = self.push(url,kwargs.get('data'),method)
+            return (method, url, reponse.status_code), reponse.json()
+        
+        elif method == 'delete':
+            reponse = self.destroy(url)
+            return (method, url, reponse.status_code), reponse.json()
         
         

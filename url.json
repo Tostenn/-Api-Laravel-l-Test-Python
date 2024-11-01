@@ -1,6 +1,6 @@
 {
  "attr": [
-  "{model}/attr",
+  "attr/{model}",
   "GET"
  ],
  "store": [
@@ -24,12 +24,12 @@
   "table",
   "GET"
  ],
- "": [
-  "{model}/attr/specify",
+ "specify": [
+  "attr/{model}/specify",
   "GET"
  ],
  "fillable": [
-  "{model}/attr/fillable",
+  "/attr/{model}/fillable",
   "GET"
  ],
  "anyView": [

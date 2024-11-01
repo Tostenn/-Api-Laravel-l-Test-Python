@@ -3,6 +3,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
+from rich.text import Text
 
 from rich import box
 from keyboard import read_event
@@ -21,11 +22,21 @@ class Output:
     def menu():
         pass
 
+    def panel(self, message, color, show=False,justify="full",**kwargs):
+        pannel = Panel(message, style=color,**kwargs)
+        if show: self.console.print(pannel,justify=justify)
+        else: return pannel
+
+    def colums(self, data:list, justify:str='center', show:bool=False):
+        columns = Columns(data)
+        if show: self.console.print(columns,justify=justify)
+        else: return columns
+
     def url_code(self,data):
-        panel_1 = Panel(f"method: [bold cyan]{data[0].upper()}[/]", style="green")
-        panel_2 = Panel(f"url: [bold cyan]{data[1]}[/]", style="green")
-        panel_3 = Panel(f"code: [bold cyan]{data[2]}[/]", style="green")
-        self.console.print(Columns([panel_1, panel_2,panel_3]),justify='center')
+        panel_1 = self.panel(message=f'method: [bold cyan]{data[0].upper()}[/]', color="green")
+        panel_2 = self.panel(message=f'url: [bold cyan]{data[1]}[/]', color="green")
+        panel_3 = self.panel(message=f'code: [bold cyan]{data[2]}[/]', color="green")
+        self.colums([panel_1,panel_2,panel_3],show=True)
 
     def read_event_touch(self):
         
@@ -36,20 +47,17 @@ class Output:
 
     def model(self,model, id, data):
         # ajouter les type des donné
-        # url et code 
-        self.url_code(data[0])
        
         half_width = self.console.size.width // 2
         table = Table(box=box.ROUNDED, style="purple",expand=False, width=half_width)
         table.add_column(f"[bold cyan]{model.capitalize()} - {id}[/]", justify="center", style="cyan", no_wrap=True)
         
-        for k,v in data[1]['data'][0].items():
-            panel_1 = Panel(k, style="white")
-            panel_2 = Panel(f"[bold cyan]{str(v)}[/]", style="green")
-            row = Columns([panel_1, panel_2])
+        for k,v in data['data'].items():
+            panel_1 = self.panel(message=k, color="white") 
+            panel_2 = self.panel(message=f"[bold cyan]{str(v)}[/]", color='green')
+            row = self.colums([panel_1, panel_2],justify='left')
             table.add_row(row)
         
-
         self.console.print(table,justify='center',)
 
         self.read_event_touch()
@@ -94,43 +102,62 @@ class Output:
         self.url_code(data[0])
         data = data[1]
         model = model.capitalize()
-        
+
         print('\n')
         self.tables(model,data['data'])
         self.read_event_touch()
-    
+
     def show_attr(self, model:str, url:str, method:str, data,column='columns',specify=False):
         self.url_code((method, url, 200))
         model = model.capitalize()
-        
+
         print('\n')
         if specify:
             self.tables(model,data,column='specify' + column)
         else:
-            self.tables(model,data,True,column)
+            self.tables(model,data,column)
         self.read_event_touch()
-        
 
-    def tables(self, model,data,array:bool=False,column=""):
+    def tables(self, model,data,column="columns"):
         # Création de la table avec Rich
         table = Table(title=model ,box=box.ROUNDED, style="purple",show_lines=True)
+       
+        if type(data) == list:
+            if type(data[0]) == dict:
+                for k in data[0]:
+                    table.add_column(k.upper(), justify="center", style="cyan", no_wrap=True)
 
-        # Définition des colonnes de la table
-        if not array:
-            for k in data[0]:
+                # Ajout des données dans la table
+                for item in data:
+                    row = [str(v) for k,v in item.items() ]
+                    table.add_row(*row)
+        
+            else:
+                table.add_column(column, justify="center", style="cyan", no_wrap=True)
+                for i in data:
+                    table.add_row(i)
+        
+        elif type(data) == dict:
+            for k in data:
                 table.add_column(k.upper(), justify="center", style="cyan", no_wrap=True)
 
             # Ajout des données dans la table
-            for item in data:
-                row = [str(v) for k,v in item.items() ]
-                table.add_row(*row)
+            row = [str(v) for k,v in data.items() ]
+            table.add_row(*row)
             
-        else:
-            table.add_column(column, justify="center", style="cyan", no_wrap=True)
-            for i in data:
-                table.add_row(i)
 
         # Affichage de la table
         self.console.print(table,justify='center')
 
-
+    def prompt_for_create(self,champ:str):
+        name = self.console.input(f"Entrez la valeur du champ [magenta][ [bold cyan]{champ} [/bold cyan]][/ magenta] : ")
+        return name
+    
+    def display_errors(self,errors:list,title="Erreurs de validation"):
+        errors = "\n".join(errors)
+        
+        self.console.print(Panel(
+            Text(errors, style="bold red"),
+            title=title,
+            border_style="red"
+        ))

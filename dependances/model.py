@@ -5,27 +5,54 @@ from dependances.output import Output
 class Model:
     """
     # model
-    represente une table laravel
+    represente une table
     """
 
     def __init__(self,model:str, url:Url, output:Output) -> None:
-        self.fillable = []
         self.relation = []
         self.url = url
         self.model = model
         self.output = output
 
         # recuperer tout les attribut
-        self.attr =  self.url.fetch(self.url.WORL['attr'], model=self.model)[1]
+        self.attr = self.url.fetch(self.url.WORL['attr'], model=self.model)[1]
         self.specify =  self.url.fetch(self.url.WORL['specify'], model=self.model)[1]
-        
-    def create():
-        pass
+        self.fillable = self.url.fetch(self.url.WORL['fillable'], model=self.model)[1]
+    
+    def create(self):
+        # rempli les champs
+        champs = {}
+        for champ in self.fillable:
+            champs[champ] = self.output.prompt_for_create(champ)
 
-    def show_attr(self):
-        url = self.url.parse_url(self.url.WORL['attr'])
-        self.output.show_attr(self.model,url[1],url[0],self.attr)
-        pass
+        # envoyer les données
+        data_request, data = self.url.fetch(self.url.WORL['store'], model=self.model, data=champs)
+        
+        # afficher l'enregistrement
+        if data.get('data'):
+            self.output.console.clear()
+            # affiche l'url, la method et le code de reponse
+            self.output.url_code(data_request)
+
+            # affichage de l'enregistrement
+            model_id = data['data']['id']
+            self.output.model(self.model, id=model_id, data=data)
+        
+        # afficher les erreur
+        else:
+            errors =[v[0] for k,v in data.items()]
+            self.output.display_errors(errors)
+            
+    def show_attr(self, specify=False):
+        url = self.url.parse_url(self.url.WORL['specify' if specify else 'attr'])
+
+        self.output.show_attr(
+            model=self.model,
+            method=url[0],
+            url=url[1],
+            data=self.specify if specify else self.attr,
+            specify=specify
+        )
 
     def any_view(self):
         data = self.url.fetch(self.url.WORL['anyView'], model=self.model)
@@ -56,15 +83,79 @@ class Model:
             self.output.console.clear()
 
     def show(self, id):
-        data = self.url.fetch(self.url.WORL['show'], model=self.model,id=id)
+        # verifi si l'id existe
+        data_request, data = self.url.fetch(self.url.WORL['show'], model=self.model,id=id)
+    
+        if 404 in data_request:
+            self.output.display_errors(title='id inconnu',errors=["l'id inqiqué n'exite pas"])
+            return 'error' # levez une errer personnalisée
+
+        # affiche l'url, la method et le code de reponse
+        self.output.url_code(data_request)
+        
+        # affichage
         self.output.model(self.model, id, data)
-        return True
 
-    def update(id):
-        pass
+    def update(self, id):
+        # verifi si l'id existe
+        data_request, data = self.url.fetch(self.url.WORL['show'], model=self.model,id=id)
+        
+        if 404 in data_request:
+            self.output.display_errors(title='id inconnu',errors=["l'id inqiqué n'exite pas"])
+            return 'error' # levez une errer personnalisée
 
-    def delete(id):
-        pass
+        # rempli les champs
+        champs = {}
+        for champ in self.fillable:
+            self.output.panel(
+                message=data['data'][champ],
+                color='cyan',
+                show=True,
+                justify="left",
+                title='valeur actuelle du champ '+ champ,
+            )
+            champs[champ] = self.output.prompt_for_create(champ)
+
+        # envoyer les données
+        data_request, data = self.url.fetch(
+            self.url.WORL['update'],
+            model=self.model,
+            id=id,
+            data=champs
+        )
+        
+        # afficher l'enregistrement
+        if data.get('data'):
+            self.output.console.clear()
+            # affiche l'url, la method et le code de reponse
+            self.output.url_code(data_request)
+
+            # affichage de l'enregistrement
+            model_id = data['data']['id']
+            self.output.model(self.model, id=model_id, data=data)
+        
+        # afficher les erreur
+        else:
+            errors =[v[0] for k,v in data.items()]
+            self.output.display_errors(errors)
+
+    def delete(self, id):
+        # verifi si l'id existe
+        data_request, data = self.url.fetch(self.url.WORL['show'], model=self.model,id=id)
+        
+        if 404 in data_request:
+            self.output.display_errors(title='id inconnu',errors=["l'id inqiqué n'exite pas"])
+            return 'error' # levez une errer personnalisée
+        
+        data_request, data = self.url.fetch(self.url.WORL['destroy'], model=self.model,id=id)
+        
+        self.output.panel(
+                message= str(data['data']),
+                color='green',
+                show=True,
+                justify="left",
+                title=f'destroy {self.model} {id}',
+            )
 
     def belongsTo():
         '''

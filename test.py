@@ -291,27 +291,47 @@ rendre ce script en une framework
 '''
 
 from rich.console import Console
-from rich.live import Live
+from rich.panel import Panel
 from rich.text import Text
-import time
 
-# Initialisation de la console Rich
+# Créer une console rich
 console = Console()
 
-# Variable pour stocker l'entrée utilisateur
-user_input = ""
+def validate_form(data):
+    errors = []
 
-# Fonction pour gérer l'affichage en direct
-def input_live():
-    global user_input
-    with Live(Text(user_input, style="cyan"), refresh_per_second=10) as live:
-        while True:
-            # Lire l'entrée utilisateur
-            char = console.input("Tapez quelque chose (ou 'exit' pour quitter): ")
-            if char.lower() == 'exit':
-                break  # Sortir de la boucle si l'utilisateur tape 'exit'
-            user_input += char + " "  # Ajouter l'entrée à la variable
-            live.update(Text(user_input, style="cyan"))  # Mettre à jour l'affichage
+    # Exemple de validation de base
+    if not data.get("nom"):
+        errors.append("Le champ [bold red]Nom[/bold red] est obligatoire.")
+    
+    if not data.get("email"):
+        errors.append("Le champ [bold red]Email[/bold red] est obligatoire.")
+    elif "@" not in data["email"]:  # Validation simple de l'email
+        errors.append("Le champ [bold red]Email[/bold red] doit contenir un '@'.")
 
-# Exécution de la fonction d'input en direct
-input_live()
+    return errors
+
+def display_errors(errors):
+    if errors:
+        error_text = "\n".join(errors)
+        console.print(Panel(
+            Text(error_text, style="bold red"),
+            title="Erreurs de validation",
+            border_style="red"
+        ))
+    else:
+        console.print(Panel(
+            "[bold green]Tous les champs sont valides ![/bold green]",
+            title="Succès",
+            border_style="green"
+        ))
+
+# Exemple d'utilisation
+form_data = {
+    "nom": "",       # Champ vide pour tester l'erreur
+    "email": "test"  # Email invalide pour tester l'erreur
+}
+
+# Validation des données et affichage des erreurs
+errors = validate_form(form_data)
+display_errors(errors)
