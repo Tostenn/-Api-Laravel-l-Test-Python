@@ -2,24 +2,27 @@
 from dependances.model import Model
 from dependances.url import Url
 from dependances.output import Output
+from dependances.table import Table
 
-
+path = "public/data"
 # url -----------
-url = Url('url.json',header='header.json')
-# print(url.parse_url(url.WORL['attr'],output_url=True))
+url = Url(path + '/url.json',header=path + '/header.json')
+
 # output -----------
 output = Output()
-
 output.console.clear()
 
+# table -----------
+table = Table(path + '/idShow.json', url=url, output=output)
+
 # model -------
-model = Model(model='tag',url=url,output=output)
+model = Model(model='user',table=table)
 
 # exit()
-# model.show_attr(specify=True)
-id= 12
-# model.update(id)
-model.delete(id)
+# model.show(1)
+id= 15
+model.delete(1)
+# model.delete(id)
 # from repertoire import enreJson
 # from requests import get,delete
 

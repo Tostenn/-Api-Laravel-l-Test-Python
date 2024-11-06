@@ -256,24 +256,21 @@ def main():
 # # print(layout)
 # print(layout.tree)
 
-# from repertoire import recujson, enreJson
-# base = 'http://127.0.0.1:8000/api'
+from repertoire import recujson, enreJson
+base = 'http://127.0.0.1:8000/api'
 
-# URL = {
-#     'base':base,
-#     'anyView' :['{model}','GET'],
-#     'table' :['table','GET'],
-#     'attr' :['{model}/attr','GET'],
-#     'specify' :['{model}/attr/specify','GET'],
-#     'fillable' :['{model}/attr/fillable','GET'],
-#     'store' :['{model}/','POST'],
-#     'show' : ['{model}/{id}','GET'],
-#     'update' : ['{model}/{id}','PUT'],
-#     'destroy' : ['{model}/{id}','DELETE'],
-# }
-# enreJson('url.json', URL)
+URL = {
+    'secondaire_id': '_id',
+    'table':{
+        'category':['nom'],
+        'vendeur' :['user_id'],
+        'user' :['nom','prenom'],
+    }
+}
+enreJson('idShow.json', URL)
 
-# print(URL)
+print(URL)
+
 '''
 rendre ce script en une framework
 
@@ -290,48 +287,48 @@ rendre ce script en une framework
     - /model/{model}/delete:supprimé une instance du model
 '''
 
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
+# from rich.console import Console
+# from rich.panel import Panel
+# from rich.text import Text
 
-# Créer une console rich
-console = Console()
+# # Créer une console rich
+# console = Console()
 
-def validate_form(data):
-    errors = []
+# def validate_form(data):
+#     errors = []
 
-    # Exemple de validation de base
-    if not data.get("nom"):
-        errors.append("Le champ [bold red]Nom[/bold red] est obligatoire.")
+#     # Exemple de validation de base
+#     if not data.get("nom"):
+#         errors.append("Le champ [bold red]Nom[/bold red] est obligatoire.")
     
-    if not data.get("email"):
-        errors.append("Le champ [bold red]Email[/bold red] est obligatoire.")
-    elif "@" not in data["email"]:  # Validation simple de l'email
-        errors.append("Le champ [bold red]Email[/bold red] doit contenir un '@'.")
+#     if not data.get("email"):
+#         errors.append("Le champ [bold red]Email[/bold red] est obligatoire.")
+#     elif "@" not in data["email"]:  # Validation simple de l'email
+#         errors.append("Le champ [bold red]Email[/bold red] doit contenir un '@'.")
 
-    return errors
+#     return errors
 
-def display_errors(errors):
-    if errors:
-        error_text = "\n".join(errors)
-        console.print(Panel(
-            Text(error_text, style="bold red"),
-            title="Erreurs de validation",
-            border_style="red"
-        ))
-    else:
-        console.print(Panel(
-            "[bold green]Tous les champs sont valides ![/bold green]",
-            title="Succès",
-            border_style="green"
-        ))
+# def display_errors(errors):
+#     if errors:
+#         error_text = "\n".join(errors)
+#         console.print(Panel(
+#             Text(error_text, style="bold red"),
+#             title="Erreurs de validation",
+#             border_style="red"
+#         ))
+#     else:
+#         console.print(Panel(
+#             "[bold green]Tous les champs sont valides ![/bold green]",
+#             title="Succès",
+#             border_style="green"
+#         ))
 
-# Exemple d'utilisation
-form_data = {
-    "nom": "",       # Champ vide pour tester l'erreur
-    "email": "test"  # Email invalide pour tester l'erreur
-}
+# # Exemple d'utilisation
+# form_data = {
+#     "nom": "",       # Champ vide pour tester l'erreur
+#     "email": "test"  # Email invalide pour tester l'erreur
+# }
 
 # Validation des données et affichage des erreurs
-errors = validate_form(form_data)
-display_errors(errors)
+# errors = validate_form(form_data)
+# display_errors(errors)

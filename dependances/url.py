@@ -1,4 +1,4 @@
-from repertoire import recujson,__ecri_fic__
+from repertoire import recujson
 from requests import get, post, put, delete
 
 class Url:
@@ -77,7 +77,6 @@ class Url:
         try:
             return delete(url, headers=self.header)
         except: return False # lever une exception personnaliser
-
 
     def fetch(self, key="", **kwargs):
         kwargs['output_str'] = False

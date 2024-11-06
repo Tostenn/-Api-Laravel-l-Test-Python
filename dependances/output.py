@@ -52,7 +52,7 @@ class Output:
         table = Table(box=box.ROUNDED, style="purple",expand=False, width=half_width)
         table.add_column(f"[bold cyan]{model.capitalize()} - {id}[/]", justify="center", style="cyan", no_wrap=True)
         
-        for k,v in data['data'].items():
+        for k,v in data.items():
             panel_1 = self.panel(message=k, color="white") 
             panel_2 = self.panel(message=f"[bold cyan]{str(v)}[/]", color='green')
             row = self.colums([panel_1, panel_2],justify='left')
