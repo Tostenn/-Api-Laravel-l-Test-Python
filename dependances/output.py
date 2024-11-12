@@ -64,8 +64,8 @@ class Output:
         # Effacer l'affichage en nettoyant la console
         self.console.clear()
 
-    def prompt_for_pagination(self,next, prev):
-        choices = [str(i+1) for i in range(4)]
+    def prompt_for_pagination(self,next=True, prev=True, choices:int=4):
+        choices = [str(i+1) for i in range(choices)]
         if not next: choices.remove('1')
         if not prev: choices.remove('2')
         # Demander à l'utilisateur de choisir une option
@@ -152,6 +152,13 @@ class Output:
     def prompt_for_create(self,champ:str):
         name = self.console.input(f"Entrez la valeur du champ [magenta][ [bold cyan]{champ} [/bold cyan]][/ magenta] : ")
         return name
+    
+    def prompt_for_id_pagination(self):
+        self.console.print('Entrez (0) pour revenir !')
+        value = self.console.input(f"[bold cyan]id: [/bold cyan]")
+        if value.isdigit(): value = int(value)
+        else: value = 0
+        return value
     
     def display_errors(self,errors:list,title="Erreurs de validation"):
         errors = "\n".join(errors)

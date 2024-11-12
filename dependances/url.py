@@ -1,5 +1,6 @@
-from repertoire import recujson
-from requests import get, post, put, delete
+
+from requests import get, post, put, delete, patch
+from env import DATA_URL, HEADER
 
 class Url:
     r"""
@@ -20,13 +21,13 @@ class Url:
         'attr':'attr',
     }
     
-    def __init__(self, json:str, header:str) -> None:
+    def __init__(self) -> None:
         # rucupere les url
-        self.json = recujson(json)
-        self.base = self.json['base']
+        self.DATA_URL = DATA_URL
+        self.base = self.DATA_URL['base']
 
         # recupere les en têtê
-        self.header = recujson(header)
+        self.header = HEADER
 
     def parse_url(self,key:str, **kwargs):
         """formatage de l'url
@@ -35,8 +36,8 @@ class Url:
             :param kwargs: arguments suplémentaire
             
         """
-        if self.json.get(key):
-            key = self.json[key]
+        if self.DATA_URL.get(key):
+            key = self.DATA_URL[key]
             url = '/' + key[0].format(model=kwargs.get('model',''),id=kwargs.get('id',''))
             url = self.base + url.replace('//','/')
             
@@ -66,6 +67,8 @@ class Url:
                 return post(url,data=data, headers=self.header)
             elif method == 'put':
                 return put(url,data=data, headers=self.header)
+            elif method == 'patch':
+                return patch(url,data=data, headers=self.header)
         except: return False # lever une exception personnaliser
     
     def destroy(self, url):
@@ -92,18 +95,15 @@ class Url:
 
         if method == 'get':
             reponse = self.pull(url) 
-            return (method, url, reponse.status_code), reponse.json()
         
-        elif method == 'post':
-            reponse = self.push(url,kwargs.get('data'))
-            return (method, url, reponse.status_code), reponse.json()
-        
-        elif method == 'put':
+        elif method in ['put', 'patch', 'post']:
             reponse = self.push(url,kwargs.get('data'),method)
-            return (method, url, reponse.status_code), reponse.json()
         
         elif method == 'delete':
             reponse = self.destroy(url)
-            return (method, url, reponse.status_code), reponse.json()
+            
+        else: return None
+        
+        return (method, url, reponse.status_code), reponse.json()
         
         

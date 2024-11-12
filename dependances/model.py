@@ -15,10 +15,10 @@ class Model:
         self.attr = self.table.url.fetch(self.table.url.WORL['attr'], model=self.model)[1]
         self.specify = self.table.url.fetch(self.table.url.WORL['specify'], model=self.model)[1]
         self.fillable = self.table.url.fetch(self.table.url.WORL['fillable'], model=self.model)[1]
-    
+
     def create(self):
         self.table.create(model=self.model, fillable=self.fillable)
-            
+
     def show_attr(self, specify=False):
         self.table.show_attr(
             model=self.model,
@@ -28,7 +28,7 @@ class Model:
 
     def any_view(self):
         self.table.any_view(model=self.model)
-    
+
     def show(self, id):
         self.table.show(
             model=self.model,
