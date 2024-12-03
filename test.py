@@ -1,33 +1,33 @@
 from repertoire import cls,rlt
 
-import trio
+# import trio
 
 cls()
 
-async def child1():
-    print("  child1: started! sleeping now...")
-    await trio.sleep(3)
-    print("  child1: exiting!")
+# async def child1():
+#     print("  child1: started! sleeping now...")
+#     await trio.sleep(3)
+#     print("  child1: exiting!")
 
 
-async def child2():
-    print("  child2: started! sleeping now...")
-    await trio.sleep(1)
-    print("  child2: exiting!")
+# async def child2():
+#     print("  child2: started! sleeping now...")
+#     await trio.sleep(1)
+#     print("  child2: exiting!")
 
 
-async def parent():
-    print("parent: started!")
-    async with trio.open_nursery() as nursery:
-        print("parent: spawning child1...")
-        nursery.start_soon(child1)
+# async def parent():
+#     print("parent: started!")
+#     async with trio.open_nursery() as nursery:
+#         print("parent: spawning child1...")
+#         nursery.start_soon(child1)
 
-        print("parent: spawning child2...")
-        nursery.start_soon(child2)
+#         print("parent: spawning child2...")
+#         nursery.start_soon(child2)
 
-        print("parent: waiting for children to finish...")
-        # -- we exit the nursery block here --
-    print("parent: all done!")
+#         print("parent: waiting for children to finish...")
+#         # -- we exit the nursery block here --
+#     print("parent: all done!")
 
 
 # trio.run(parent)
@@ -59,10 +59,10 @@ data = {
 # console.rule("[bold red]Chapter 2")
 # console.print_json('[false, true, null, "foo"]')
 
-# with console.status("[bold italic yellow on red blink]This text is impossible to read"):
-#     rlt(3)
-# with console.status("Monkeying around...", spinner="monkey"):
-#     rlt(3)
+with console.status("[bold italic yellow on red blink]This text is impossible to read"):
+    rlt(3)
+with console.status("Monkeying around...", spinner="monkey"):
+    rlt(3)
 
 # console.input("What is [i]your[/i] [bold red]name[/]? :smiley: ")
 
@@ -256,20 +256,20 @@ def main():
 # # print(layout)
 # print(layout.tree)
 
-from repertoire import recujson, enreJson
-base = 'http://127.0.0.1:8000/api'
+# from repertoire import recujson, enreJson
+# base = 'http://127.0.0.1:8000/api'
 
-URL = {
-    'secondaire_id': '_id',
-    'table':{
-        'category':['nom'],
-        'vendeur' :['user_id'],
-        'user' :['nom','prenom'],
-    }
-}
-enreJson('idShow.json', URL)
+# URL = {
+#     'secondaire_id': '_id',
+#     'table':{
+#         'category':['nom'],
+#         'vendeur' :['user_id'],
+#         'user' :['nom','prenom'],
+#     }
+# }
+# enreJson('idShow.json', URL)
 
-print(URL)
+# print(URL)
 
 '''
 rendre ce script en une framework
